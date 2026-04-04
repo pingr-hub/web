@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-291,-154)">
+        <g id="logo" transform="matrix(1,0,0,1,291,154)">
+            <rect x="0" y="0" width="100" height="100" style="fill:none;"/>
+            <g transform="matrix(1,0,0,1,-0.953524,-6)">
+                <g transform="matrix(1,0,0,1,-154.785934,20.594233)">
+                    <g transform="matrix(1.273818,0,0,1,-46.116744,0)">
+                        <g transform="matrix(24.484009,0,0,24.484009,226.703783,68.791387)">
+                        </g>
+                        <text x="168.421px" y="68.791px" style="font-family:'Geist-Regular', 'Geist';font-size:24.484px;fill:rgb(36,36,36);">p<tspan x="182.797px 188.886px 202.881px " y="68.791px 68.791px 68.791px ">ing</tspan>r</text>
+                    </g>
+                </g>
+                <g transform="matrix(4.189776,0,0,4.189776,0.678312,0.996835)">
+                    <path d="M8.445,16.203C6.147,16.131 4.271,15.987 3.688,15.772C5.179,14.121 6.003,11.974 6,9.75L6,9C6,5.708 8.708,3 12,3C15.292,3 18,5.708 18,9L18,9.75C17.997,11.974 18.821,14.121 20.311,15.772C19.369,16.12 15.168,16.279 11.202,16.253L11.202,14.688L12.722,14.688C13.556,14.688 14.276,14.53 14.881,14.215C15.486,13.901 15.95,13.452 16.274,12.871C16.597,12.289 16.759,11.603 16.759,10.814C16.759,9.608 16.4,8.658 15.683,7.964C14.965,7.271 13.978,6.924 12.722,6.924L8.445,6.924L8.445,16.203ZM11.202,12.174L11.202,9.437L12.511,9.437C12.951,9.437 13.301,9.554 13.559,9.789C13.817,10.024 13.946,10.366 13.946,10.814C13.946,11.262 13.814,11.601 13.552,11.83C13.289,12.06 12.942,12.174 12.511,12.174L11.202,12.174Z" style="fill:rgb(36,36,36);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
