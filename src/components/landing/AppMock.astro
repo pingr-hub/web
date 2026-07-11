@@ -1,0 +1,37 @@
+---
+// Shared Pingr app popover frame — uniform header/footer across every mock.
+// Header: tb-logo + seg[Inbox|Brief|Ask] (active=view) + tb-ico (search).
+// Footer: statusbar[state-label + kbd hint]. Body via default slot.
+import BrandIcon from "./BrandIcon.astro";
+interface Props {
+  width?: number | string;
+  height?: number | string;
+  view?: "inbox" | "brief" | "ask";
+  state?: string;
+  hint?: string;
+}
+const { width, height, view = "inbox", state, hint } = Astro.props;
+const w = typeof width === "number" ? `${width}px` : width;
+const h = typeof height === "number" ? `${height}px` : height;
+const style = [w && `width:${w}`, h && `height:${h}`].filter(Boolean).join(";");
+const tabs: [string, string][] = [["inbox", "Inbox"], ["brief", "Brief"], ["ask", "Ask"]];
+---
+<div class="popover" style={style || undefined}>
+  <div class="pop">
+    <div class="topbar">
+      <div class="tb-logo"><BrandIcon size={14} />Pingr</div>
+      <div class="tb-spacer"></div>
+      <div class="seg">
+        {tabs.map(([key, label]) => <span class={`seg-i${view === key ? " on" : ""}`}>{label}</span>)}
+      </div>
+      <div class="tb-ico" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+    </div>
+    <slot />
+    {(state || hint) && (
+      <div class="statusbar">
+        {state && <span>{state}</span>}
+        {hint && <span class="kbd">{hint}</span>}
+      </div>
+    )}
+  </div>
+</div>

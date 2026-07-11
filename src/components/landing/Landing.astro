@@ -1,0 +1,72 @@
+---
+// Full landing page shell. Renders every section for a given language at build time.
+import { useTranslations, type Lang } from "../../i18n/ui";
+import "virtual:uno.css";
+import GlobalStyles from "./GlobalStyles.astro";
+import Nav from "./Nav.astro";
+import Hero from "./Hero.astro";
+import Features from "./Features.astro";
+import AIBrief from "./AIBrief.astro";
+import AskPingr from "./AskPingr.astro";
+import Integrations from "./Integrations.astro";
+import ChannelRequest from "./ChannelRequest.astro";
+import Pricing from "./Pricing.astro";
+import Footer from "./Footer.astro";
+
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// SEO metadata is localized per language.
+const meta = {
+  en: {
+    title: "Pingr · one quiet inbox for every notification",
+    desc: "Pingr pulls GitHub, Gmail, WhatsApp, Slack and more into one calm menu-bar inbox · with an AI daily brief, instant local search, and privacy by default.",
+  },
+  es: {
+    title: "Pingr · una bandeja tranquila para cada notificación",
+    desc: "Pingr reúne GitHub, Gmail, WhatsApp, Slack y más en una bandeja tranquila en la barra de menús · con resumen diario de IA, búsqueda local instantánea y privacidad por defecto.",
+  },
+  de: {
+    title: "Pingr · ein ruhiger Posteingang für jede Meldung",
+    desc: "Pingr bündelt GitHub, Gmail, WhatsApp, Slack und mehr in einem ruhigen Menüleisten-Posteingang · mit KI-Tagesbriefing, sofortiger lokaler Suche und Datenschutz ab Werk.",
+  },
+  tr: {
+    title: "Pingr · her bildirim için tek sakin gelen kutusu",
+    desc: "Pingr; GitHub, Gmail, WhatsApp, Slack ve fazlasını menü çubuğundaki sakin tek bir gelen kutusunda toplar · yapay zekâ günlük özeti, anlık yerel arama ve varsayılan gizlilikle.",
+  },
+}[lang];
+---
+
+<!doctype html>
+<html lang={lang}>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{meta.title}</title>
+<meta name="description" content={meta.desc} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="alternate" hreflang="en" href={new URL("/", Astro.site)} />
+<link rel="alternate" hreflang="es" href={new URL("/es", Astro.site)} />
+<link rel="alternate" hreflang="de" href={new URL("/de", Astro.site)} />
+<link rel="alternate" hreflang="tr" href={new URL("/tr", Astro.site)} />
+<link rel="alternate" hreflang="x-default" href={new URL("/", Astro.site)} />
+</head>
+<body>
+  <GlobalStyles />
+  <Nav lang={lang} />
+  <Hero lang={lang} />
+  <Features lang={lang} />
+  <AIBrief lang={lang} />
+  <AskPingr lang={lang} />
+  <Integrations lang={lang} />
+  <ChannelRequest lang={lang} />
+  <Pricing lang={lang} />
+  <Footer lang={lang} />
+
+  <script src="/landing.js" is:inline></script>
+</body>
+</html>

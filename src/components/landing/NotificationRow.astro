@@ -1,0 +1,49 @@
+---
+// Uniform inbox notification row — shared across all inbox mocks (Hero, Features F1/F2/F3).
+interface Props {
+  initials: string;
+  channel: "github" | "slack" | "gmail" | "whatsapp";
+  source: string;
+  time: string;
+  title: string;
+  preview: string;
+  unread?: boolean;
+  highlight?: boolean;
+  snoozed?: string;
+  mark?: string; // term to highlight inside title/preview (case-insensitive)
+}
+const { initials, channel, source, time, title, preview, unread = false, highlight = false, snoozed, mark, ...rest } = Astro.props;
+const cls = ["nrow", unread && "unread", snoozed && "snoozed"].filter(Boolean).join(" ");
+const style = highlight ? "background:var(--bg-hover)" : undefined;
+// Wrap case-insensitive matches of `mark` in <mark>; leave rest as-is.
+const markText = (text: string, term: string) => {
+  if (!term) return text;
+  const t = term.toLowerCase();
+  const low = text.toLowerCase();
+  const out: (string)[] = [];
+  let i = 0;
+  while (i < text.length) {
+    const idx = low.indexOf(t, i);
+    if (idx === -1) { out.push(text.slice(i)); break; }
+    if (idx > i) out.push(text.slice(i, idx));
+    out.push(`<mark>${text.slice(idx, idx + term.length)}</mark>`);
+    i = idx + term.length;
+  }
+  return out.join("");
+};
+const titleHtml = mark ? markText(title, mark) : title;
+const previewHtml = mark ? markText(preview, mark) : preview;
+---
+<div class={cls} style={style} {...rest}>
+  <div class={`avatar${unread ? " unread" : ""}`}>{initials}</div>
+  <div class="rb">
+    <div class="rt">
+      <span class="rt-l"><span class="chip-ch"><span class="sw-dot" style={`background:var(--ch-${channel})`}></span>{source}</span></span>
+      {snoozed
+        ? <span class="snooze-chip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{snoozed}</span>
+        : <span class="rt-r">{time}</span>}
+    </div>
+    <div class="rti" set:html={titleHtml} />
+    <div class="rpv" set:html={previewHtml} />
+  </div>
+</div>

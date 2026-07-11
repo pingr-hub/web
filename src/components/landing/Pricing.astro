@@ -1,0 +1,156 @@
+---
+// Pricing · three plans with a monthly/yearly toggle handled in landing.js.
+// Prices/toggle are numeric (data-m/data-y); billing label + amounts flip client-side.
+import { useTranslations, type Lang, type TranslationKey } from "../../i18n/ui";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+type IconKind = "check" | "ai" | "off";
+interface Feat { key: TranslationKey; kind: IconKind; }
+interface Plan {
+  card: string;
+  nameKey: TranslationKey;
+  tagKey: TranslationKey;
+  monthly: string; yearly: string; yearTotal: string;
+  badge?: { key: TranslationKey; ai?: boolean };
+  cta: string;
+  feats: Feat[];
+}
+
+const sparkPath = "M12 2c.5 5 2.5 7 7 7.5-4.5.5-6.5 2.5-7 7.5-.5-5-2.5-7-7-7.5 4.5-.5 6.5-2.5 7-7.5z";
+
+const plans: Plan[] = [
+  {
+    card: "",
+    nameKey: "pr_lite",
+    tagKey: "pr_lite_tag",
+    monthly: "1.99", yearly: "1.66", yearTotal: "19.90",
+    cta: "ghost",
+    feats: [
+      { key: "pr_lite_f1", kind: "check" },
+      { key: "pr_lite_f2", kind: "check" },
+      { key: "pr_lite_f3", kind: "check" },
+    ],
+  },
+  {
+    card: "feat",
+    nameKey: "pr_pro",
+    tagKey: "pr_pro_tag",
+    monthly: "4.99", yearly: "4.16", yearTotal: "49.90",
+    badge: { key: "pr_badge_pop" },
+    cta: "pri",
+    feats: [
+      { key: "pr_pro_f1", kind: "check" },
+      { key: "pr_pro_f2", kind: "check" },
+      { key: "pr_pro_f3", kind: "ai" },
+      { key: "pr_pro_f4", kind: "ai" },
+    ],
+  },
+  {
+    card: "max",
+    nameKey: "pr_max",
+    tagKey: "pr_max_tag",
+    monthly: "9.99", yearly: "8.32", yearTotal: "99.90",
+    badge: { key: "pr_badge_ai", ai: true },
+    cta: "ghost",
+    feats: [
+      { key: "pr_max_f1", kind: "check" },
+      { key: "pr_max_f2", kind: "ai" },
+      { key: "pr_max_f3", kind: "ai" },
+    ],
+  },
+];
+---
+<span id="download"></span>
+<section class="lp-section" id="pricing" style="border-top:1px solid var(--border)">
+  <div class="lp-wrap">
+    <div class="pr-head">
+      <span class="lp-eyebrow">{t("pr_eye")}</span>
+      <div class="pr-toggle">
+        <button data-mode="m" class="on">{t("pr_tog_m")}</button>
+        <button data-mode="y">{t("pr_tog_y")}</button>
+      </div>
+    </div>
+
+    <div class="pr-grid">
+      {plans.map((plan) => (
+        <div class={`pr-card${plan.card ? " " + plan.card : ""}`}>
+          {plan.badge && (
+            plan.badge.ai
+              ? <div class="pr-badge ai"><span class="spark"><svg viewBox="0 0 24 24" style="fill:currentColor"><path d={sparkPath}/></svg></span><span>{t(plan.badge.key)}</span></div>
+              : <div class="pr-badge">{t(plan.badge.key)}</div>
+          )}
+          <div class="pr-name">{t(plan.nameKey)}</div>
+          <div class="pr-price"><span class="cur">$</span><span class="amt" data-m={plan.monthly} data-y={plan.yearly}>{plan.monthly}</span><span class="per">{t("pr_per")}</span></div>
+          <div class="pr-bill" data-bill-m={t("pr_bill_m")} data-bill-y={t("pr_bill_y").replace("{total}", "$" + plan.yearTotal)}>{t("pr_bill_m")}</div>
+          <a class={`lp-btn ${plan.cta}`} href="#download">{t("pr_cta")}</a>
+          <ul class="pr-feat">
+            {plan.feats.map((f) => (
+              <li>
+                <span class={`ic${f.kind === "ai" ? " ai" : f.kind === "off" ? " off" : ""}`}>
+                  {f.kind === "ai"
+                    ? <svg viewBox="0 0 24 24"><path d={sparkPath}/></svg>
+                    : f.kind === "off"
+                      ? <svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg>
+                      : <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>}
+                </span>
+                <span set:html={t(f.key)} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div class="pr-note">{t("pr_note")}</div>
+  </div>
+</section>
+
+<script>
+  // Pricing — one-shot staggered reveal: cards fade/slide in in order, then
+  // each card's feature list cascades open. Re-plays whenever the section
+  // scrolls into view. Cards are visible by default (CSS opacity:1), so they
+  // never look empty even if the reveal hasn't fired yet. Toggle stays
+  // interactive. Bound to scroll position, not hash — the pricing/privacy
+  // sections sit at the bottom where the hash may land on #privacy instead.
+  import { animate } from "motion";
+  const root = document.querySelector("#pricing");
+  if (root) {
+    const cards = Array.from(root.querySelectorAll(".pr-card"));
+    let played = false;
+
+    const play = () => {
+      if (played) return;
+      played = true;
+      cards.forEach((card, i) => {
+        const feats = Array.from(card.querySelectorAll(".pr-feat li"));
+        animate(card, { opacity: [0, 1], y: [18, 0] }, {
+          duration: 0.4, delay: i * 0.12, ease: "ease-out",
+        });
+        feats.forEach((li, j) => {
+          li.style.opacity = "0";
+          animate(li, { opacity: [0, 1], y: [8, 0] }, {
+            duration: 0.3, delay: i * 0.12 + 0.2 + j * 0.07, ease: "ease-out",
+            onComplete: () => { li.style.opacity = ""; },
+          });
+        });
+      });
+    };
+
+    // section is "in view" when any part of it is visible in the viewport
+    // (top above the bottom edge, bottom below the top edge).
+    const inView = () => {
+      const r = root.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.85 && r.bottom > window.innerHeight * 0.15;
+    };
+
+    const onScroll = () => {
+      if (inView()) play();
+      else played = false; // left the section → allow re-play next entry
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+  }
+</script>
