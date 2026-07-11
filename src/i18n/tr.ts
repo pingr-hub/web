@@ -1,7 +1,8 @@
 // Türkçe. Values may contain inline HTML — render with set:html.
 // Keys match en.ts exactly; empty values fall back to English (see ui.ts).
 export default {
-  nav_features: "Özellikler", nav_brief: "Günlük özet", nav_ask: "Sor", nav_integrations: "Entegrasyonlar", nav_pricing: "Fiyatlandırma", nav_privacy: "Gizlilik", nav_signin: "Giriş yap", nav_download: "Mac için indir",
+  nav_features: "Özellikler", nav_brief: "Günlük özet", nav_ask: "Sor", nav_integrations: "Entegrasyonlar", nav_pricing: "Fiyatlandırma", nav_privacy: "Gizlilik", nav_terms: "Şartlar", nav_refund: "İade", nav_signin: "Giriş yap", nav_download: "Mac için indir",
+  legal_last_updated: "Son güncelleme", legal_eyebrow: "Legal",
   hero_pill: `<span class="tag">Yeni</span> Yapay zeka · özet &amp; sohbet`,
   hero_h1: `Bildirimlerini Akıllandır`,
   hero_lead: `Pingr; GitHub, Gmail, WhatsApp, Slack ve bir düzine servisi tek bir menü çubuğu gelen kutusunda toplar · her şeyi tek yerden yönet, günlük özetini aç ve yapay zeka takipte kalmana yardım etsin.`,

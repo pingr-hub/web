@@ -1,0 +1,21 @@
+---
+// Non-default locale legal pages: /es/{privacy|terms|refund}, /de/..., /tr/...
+// EN lives at the root (pages/{privacy,terms,refund}.astro), not here.
+// `doc` is constrained to the known legal docs via getStaticPaths.
+import LegalLayout from "../../layouts/LegalLayout.astro";
+import { languages, defaultLang, type Lang } from "../../i18n/ui";
+import type { LegalDoc } from "../../i18n/legal";
+
+export function getStaticPaths() {
+  const docs: LegalDoc[] = ["privacy", "terms", "refund"];
+  const langs = (Object.keys(languages) as Lang[]).filter(
+    (l) => l !== defaultLang
+  );
+  return langs.flatMap((lang) =>
+    docs.map((doc) => ({ params: { lang, doc } }))
+  );
+}
+
+const { lang, doc } = Astro.params as { lang: Lang; doc: LegalDoc };
+---
+<LegalLayout lang={lang} doc={doc} />

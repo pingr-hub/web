@@ -1,6 +1,7 @@
 // English (default). Values may contain inline HTML — render with set:html.
 export default {
-  nav_features: "Features", nav_brief: "Daily brief", nav_ask: "Ask", nav_integrations: "Integrations", nav_pricing: "Pricing", nav_privacy: "Privacy", nav_signin: "Sign in", nav_download: "Download for Mac",
+  nav_features: "Features", nav_brief: "Daily brief", nav_ask: "Ask", nav_integrations: "Integrations", nav_pricing: "Pricing", nav_privacy: "Privacy", nav_terms: "Terms", nav_refund: "Refund", nav_signin: "Sign in", nav_download: "Download for Mac",
+  legal_last_updated: "Last updated", legal_eyebrow: "Legal",
   hero_pill: `<span class="tag">New</span> AI · brief &amp; chat`,
   hero_h1: `Make your notifications smart`,
   hero_lead: `Pingr pulls GitHub, Gmail, WhatsApp, Slack and a dozen more into one menu-bar inbox · manage everything in one place, open a daily brief, and let AI help you keep up.`,

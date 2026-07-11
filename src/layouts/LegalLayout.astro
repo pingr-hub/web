@@ -1,0 +1,199 @@
+---
+// Legal page shell (privacy / terms / refund). Reuses the landing's exact
+// Nav + Footer so the chrome matches the home page; only the main slot differs
+// — a centered prose column rendered from structured i18n content (legal.ts).
+import "virtual:uno.css";
+import GlobalStyles from "../components/landing/GlobalStyles.astro";
+import Nav from "../components/landing/Nav.astro";
+import Footer from "../components/landing/Footer.astro";
+import { getLegalPage } from "../i18n/legal";
+import { useTranslations, languages, langPath, type Lang } from "../i18n/ui";
+import type { LegalDoc } from "../i18n/legal";
+
+interface Props {
+  lang: Lang;
+  doc: LegalDoc;
+}
+
+const { lang, doc } = Astro.props;
+const t = useTranslations(lang);
+const page = getLegalPage(lang, doc);
+
+// hreflang alternates: one URL per locale for the same legal doc, so search
+// engines cluster /privacy, /es/privacy, /de/privacy, /tr/privacy together.
+const docSlug = `/${doc}/`;
+const alternateHrefs = (Object.keys(languages) as Lang[]).map((l) => ({
+  lang: l,
+  href: `${langPath(l)}${docSlug}`,
+}));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={page.description} />
+    <title>{page.title} — Pingr</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    {Astro.site && alternateHrefs.map((alt) => (
+      <link rel="alternate" hreflang={alt.lang} href={new URL(alt.href, Astro.site).href} />
+    ))}
+    {Astro.site && (
+      <link rel="alternate" hreflang="x-default" href={new URL(docSlug, Astro.site).href} />
+    )}
+  </head>
+  <body>
+    <GlobalStyles />
+    <Nav lang={lang} />
+
+    <span id="top"></span>
+    <main class="legal">
+      <div class="legal-wrap">
+        <p class="legal-eyebrow">{t("legal_eyebrow")}</p>
+        <h1 class="legal-h1">{page.title}</h1>
+        <p class="legal-updated">
+          {t("legal_last_updated")} · <span>{page.lastUpdated}</span>
+        </p>
+        <div class="legal-body">
+          {page.sections.map((section) => (
+            <section>
+              {section.h && <h2>{section.h}</h2>}
+              {section.blocks.map((block) =>
+                block.type === "lead" ? (
+                  <p class="lead" set:html={block.html} />
+                ) : block.type === "ul" ? (
+                  <ul>
+                    {block.items.map((item) => (
+                      <li set:html={item} />
+                    ))}
+                  </ul>
+                ) : (
+                  <p set:html={block.html} />
+                )
+              )}
+            </section>
+          ))}
+        </div>
+      </div>
+    </main>
+
+    <Footer lang={lang} />
+
+    <style is:global>
+      /* Legal page prose — unlayered so it wins over UnoCSS shortcuts,
+         same strategy as GlobalStyles. Tokens are inherited from there. */
+      .legal {
+        padding: clamp(48px, 8vw, 96px) var(--lp-pad) clamp(64px, 10vw, 120px);
+      }
+      .legal-wrap {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      .legal-eyebrow {
+        font-family: var(--fm);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .legal-h1 {
+        font-size: clamp(30px, 5vw, 44px);
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+        color: var(--fg);
+      }
+      .legal-updated {
+        font-family: var(--fm);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        color: var(--fg-dim);
+        margin-top: 14px;
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--lp-line);
+      }
+      .legal-updated span {
+        color: var(--fg-muted);
+      }
+      .legal-body {
+        margin-top: 32px;
+      }
+      .legal-body section {
+        margin-top: 0;
+      }
+      .legal-body h2 {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--fg);
+        margin: 40px 0 12px;
+      }
+      .legal-body section:first-child h2 {
+        margin-top: 0;
+      }
+      .legal-body p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--fg-muted);
+        margin-bottom: 14px;
+      }
+      .legal-body p.lead {
+        font-size: 17px;
+        line-height: 1.6;
+        color: var(--fg);
+        margin-bottom: 24px;
+      }
+      .legal-body strong {
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .legal-body ul {
+        list-style: none;
+        margin: 12px 0 18px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .legal-body li {
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--fg-muted);
+        padding-left: 20px;
+        position: relative;
+      }
+      .legal-body li::before {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 11px;
+        width: 5px;
+        height: 5px;
+        border-radius: 9999px;
+        background: var(--accent-dim);
+      }
+      .legal-body li strong {
+        color: var(--fg);
+      }
+      .legal-body a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(125, 200, 255, 0.3);
+        transition: border-color 0.15s;
+      }
+      .legal-body a:hover {
+        border-bottom-color: var(--accent);
+      }
+    </style>
+
+    <script src="/landing.js" is:inline></script>
+  </body>
+</html>

@@ -1,7 +1,8 @@
 // Deutsch. Values may contain inline HTML — render with set:html.
 // Keys match en.ts exactly; empty values fall back to English (see ui.ts).
 export default {
-  nav_features: "Funktionen", nav_brief: "Tägliche Übersicht", nav_ask: "Fragen", nav_integrations: "Integrationen", nav_pricing: "Preise", nav_privacy: "Datenschutz", nav_signin: "Anmelden", nav_download: "Für Mac laden",
+  nav_features: "Funktionen", nav_brief: "Tägliche Übersicht", nav_ask: "Fragen", nav_integrations: "Integrationen", nav_pricing: "Preise", nav_privacy: "Datenschutz", nav_terms: "AGB", nav_refund: "Erstattung", nav_signin: "Anmelden", nav_download: "Für Mac laden",
+  legal_last_updated: "Aktualisiert am", legal_eyebrow: "Legal",
   hero_pill: `<span class="tag">Neu</span> KI · Übersicht &amp; Chat`,
   hero_h1: `Mach deine Benachrichtigungen smart`,
   hero_lead: `Pingr bündelt GitHub, Gmail, WhatsApp, Slack und ein Dutzend mehr in einem Postfach in der Menüleiste · verwalte alles an einem Ort, öffne eine tägliche Übersicht und lass dir von der KI beim Dranbleiben helfen.`,
