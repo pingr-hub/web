@@ -1,0 +1,42 @@
+---
+// Channel request form. Channel name is required; description and email are optional
+// (email only used to report status back). No backend yet — submit shows a thank-you
+// state client-side. TODO: wire to backend endpoint when available.
+import { useTranslations, type Lang } from "../../i18n/ui";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="lp-section cr-section" id="request" style="border-top:1px solid var(--border)">
+  <div class="lp-wrap">
+    <div class="cr-card">
+      <div class="cr-head">
+        <span class="lp-eyebrow">{t("cr_eye")}</span>
+        <h2 class="lp-h2" set:html={t("cr_h2")} />
+        <p class="lp-lead" set:html={t("cr_lead")} />
+      </div>
+
+      <form class="cr-form" novalidate>
+        <div class="cr-row">
+          <label class="cr-field">
+            <span class="cr-label">{t("cr_name_label")}<em>*</em></span>
+            <input type="text" name="channel" required placeholder={t("cr_name_ph")} autocomplete="off" />
+          </label>
+          <label class="cr-field">
+            <span class="cr-label">{t("cr_email_label")}</span>
+            <input type="email" name="email" placeholder={t("cr_email_ph")} autocomplete="email" />
+            <span class="cr-help">{t("cr_email_help")}</span>
+          </label>
+        </div>
+        <label class="cr-field">
+          <span class="cr-label">{t("cr_desc_label")}</span>
+          <textarea name="description" rows="3" placeholder={t("cr_desc_ph")}></textarea>
+        </label>
+        <div class="cr-actions">
+          <span class="cr-status" role="status" aria-live="polite" data-thanks={t("cr_thanks")}></span>
+          <button type="submit" class="lp-btn pri">{t("cr_submit")}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,8 +1,5 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+// Default-locale (English) landing page, served at /.
+import Landing from "../components/landing/Landing.astro";
 ---
-
-<BaseLayout title="Home" description="Pingr — All your notifications in one place. GitHub, Gmail, WhatsApp, Zammad in a single macOS menu bar app.">
-  <h1>Pingr</h1>
-  <p>All your notifications in one place. A lightweight macOS menu bar app that aggregates notifications from GitHub, Gmail, WhatsApp, and Zammad.</p>
-</BaseLayout>
+<Landing lang="en" />

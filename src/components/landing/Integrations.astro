@@ -1,0 +1,92 @@
+---
+// Integration logo grid · data-driven tiles with a monogram fallback wired in landing.js.
+import { useTranslations, type Lang } from "../../i18n/ui";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+interface Integration {
+  name: string;
+  auth: string;
+  color: string;
+  mono: string;
+  icon: string;
+  width: number;
+  soon?: boolean;
+}
+
+const integrations: Integration[] = [
+  { name: "GitHub",    auth: "Token",   color: "var(--ch-github)",   mono: "GH", icon: "https://cdn.simpleicons.org/github/E8E8EC",    width: 36 },
+  { name: "Gmail",     auth: "OAuth",   color: "var(--ch-gmail)",    mono: "GM", icon: "https://cdn.simpleicons.org/gmail/E8E8EC",     width: 36 },
+  { name: "WhatsApp",  auth: "QR link", color: "var(--ch-whatsapp)", mono: "WA", icon: "https://cdn.simpleicons.org/whatsapp/E8E8EC",  width: 36 },
+  { name: "Slack",     auth: "OAuth",   color: "var(--ch-slack)",    mono: "SL", icon: "/logos/slack.svg",                             width: 38 },
+  { name: "X",         auth: "OAuth",   color: "var(--ch-twitter)",  mono: "X",  icon: "https://cdn.simpleicons.org/x/E8E8EC",         width: 32 },
+  { name: "Messenger", auth: "OAuth",   color: "var(--ch-facebook)", mono: "ME", icon: "https://cdn.simpleicons.org/messenger/E8E8EC", width: 36 },
+  { name: "Telegram",  auth: "Bot",     color: "var(--ch-telegram)", mono: "TG", icon: "https://cdn.simpleicons.org/telegram/E8E8EC",  width: 36 },
+  { name: "Discord",   auth: "OAuth",   color: "var(--ch-discord)",  mono: "DC", icon: "https://cdn.simpleicons.org/discord/E8E8EC",   width: 36 },
+  { name: "Plane",     auth: "Token",   color: "var(--ch-plane)",    mono: "PL", icon: "https://cdn.simpleicons.org/plane/E8E8EC",     width: 36 },
+  { name: "Linear",    auth: "OAuth",   color: "var(--ch-linear)",   mono: "LN", icon: "https://cdn.simpleicons.org/linear/E8E8EC",    width: 36 },
+  { name: "Notion",    auth: "OAuth",   color: "var(--ch-notion)",   mono: "NO", icon: "https://cdn.simpleicons.org/notion/E8E8EC",    width: 36 },
+  { name: "Jira",      auth: "Token",   color: "var(--ch-jira)",     mono: "JR", icon: "https://cdn.simpleicons.org/jira/E8E8EC",      width: 32, soon: true },
+  { name: "GitLab",    auth: "Token",   color: "var(--ch-gitlab)",   mono: "GL", icon: "https://cdn.simpleicons.org/gitlab/E8E8EC",    width: 36, soon: true },
+];
+---
+<section class="lp-section" id="integrations" style="border-top:1px solid var(--border)">
+  <div class="lp-wrap">
+    <div class="ig-split">
+      <div class="ig-grid">
+        {integrations.map((it) => (
+          <div class={`ig-tile${it.soon ? " soon" : ""}`} style={`--g:${it.color}`}>
+            {it.soon && <span class="ig-badge">Soon</span>}
+            <span class="ig-logo"><img src={it.icon} alt={it.name} width={it.width} height={it.width} loading="lazy" data-mono={it.mono} data-color={it.color} /></span>
+            <div class="ig-txt"><div class="ig-name">{it.name}</div></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="ig-copy">
+        <span class="lp-eyebrow">{t("ig_eye")}</span>
+        <h2 class="lp-h2" set:html={t("ig_h2")} />
+        <p class="lp-lead" set:html={t("ig_lead")} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Integrations — one-shot staggered reveal: tiles fade/slide in in order.
+  // Re-plays whenever the section scrolls into view. Tiles are visible by
+  // default (CSS opacity:1), so the grid never looks empty before the reveal.
+  // Bound to scroll position, not hash.
+  import { animate } from "motion";
+  const root = document.querySelector("#integrations");
+  if (root) {
+    const tiles = Array.from(root.querySelectorAll(".ig-tile"));
+    const REVEAL_DELAY = 0.06;
+    let played = false;
+
+    const play = () => {
+      if (played) return;
+      played = true;
+      tiles.forEach((t, i) => {
+        animate(t, { opacity: [0, 1], y: [14, 0] }, {
+          duration: 0.35, delay: i * REVEAL_DELAY, ease: "ease-out",
+        });
+      });
+    };
+
+    const inView = () => {
+      const r = root.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.85 && r.bottom > window.innerHeight * 0.15;
+    };
+
+    const onScroll = () => {
+      if (inView()) play();
+      else played = false;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+  }
+</script>

@@ -1,0 +1,39 @@
+---
+// Ask Pingr · on-demand grounded chat over the connected inbox.
+// Mock chat content is static product-demo data and is intentionally not translated.
+import { useTranslations, type Lang } from "../../i18n/ui";
+import AppMock from "./AppMock.astro";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const spark = "M12 2c.5 5 2.5 7 7 7.5-4.5.5-6.5 2.5-7 7.5-.5-5-2.5-7-7-7.5 4.5-.5 6.5-2.5 7-7.5z";
+---
+<section class="lp-section" id="ask" style="border-top:1px solid var(--border);background:linear-gradient(180deg, rgba(198,184,244,.04), transparent 30%)">
+  <div class="lp-wrap">
+    <div class="lp-feature">
+      <div class="lp-copy">
+        <span class="lp-eyebrow ai"><span class="spark"><svg viewBox="0 0 24 24" style="fill:currentColor"><path d={spark}/></svg></span><span>{t("ask_eye")}</span></span>
+        <h2 class="lp-h2" set:html={t("ask_h2")} />
+        <p class="lp-lead" set:html={t("ask_lead")} />
+        <ul class="lp-ul">
+          <li><span class="ic ai"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("ask_b1")} /></li>
+          <li><span class="ic ai"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("ask_b2")} /></li>
+          <li><span class="ic ai"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("ask_b3")} /></li>
+        </ul>
+      </div>
+      <div class="lp-mock ai">
+        <span class="tagchip">Ask · AI</span>
+        <AppMock width={392} height={785} view="ask" state="Synced · 14:02" hint="⌘↵">
+          <div class="chat" data-ask style="overflow:visible">
+            <div class="msg me" data-ask-el><div class="bubble">When's my meeting with Ada?</div></div>
+            <div class="msg ai" data-ask-el><div class="ava"><svg viewBox="0 0 24 24"><path d={spark}/></svg></div><div class="bubble" data-ask-stream>You don't have a one-on-one with Ada today. Your last 1:1 was <b>yesterday at 1:30pm</b>. Your only scheduled call today is Grace's design crit at <b>4pm</b>.<div class="src-row"><span class="src"><span class="sw-dot" style="background:var(--ch-github)"></span>Calendar · 1:1 Ada</span><span class="src"><span class="sw-dot" style="background:var(--ch-slack)"></span>Slack · #ada-you</span></div></div></div>
+            <div class="msg me" data-ask-el><div class="bubble">Is 4pm free for the crit?</div></div>
+            <div class="msg ai" data-ask-el><div class="ava"><svg viewBox="0 0 24 24"><path d={spark}/></svg></div><div class="bubble" data-ask-stream>Yes — <b>4pm</b> is open. Grace, Linus and Ada are available; two people haven't replied yet.<div class="src-row"><span class="src"><span class="sw-dot" style="background:var(--ch-whatsapp)"></span>WhatsApp · Design crit</span></div></div></div>
+            <div class="msg me" data-ask-el><div class="bubble">Show me the crit thread</div></div>
+          </div>
+          <div class="composer"><div class="box"><input placeholder="Ask about your inbox…" readonly><span class="odv">AI</span></div><button class="send"><svg viewBox="0 0 24 24"><path d="M4 12l16-7-7 16-2-7-7-2z"/></svg></button></div>
+        </AppMock>
+      </div>
+    </div>
+  </div>
+</section>

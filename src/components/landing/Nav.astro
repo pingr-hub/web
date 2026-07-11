@@ -1,0 +1,71 @@
+---
+// Sticky top navigation with language switcher (route links) + auth actions.
+import { useTranslations, languages, languageNames, langPath, defaultLang, type Lang } from "../../i18n/ui";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = langPath(lang); // "" for en, "/es" etc.
+---
+<nav class="lp-nav">
+  <div class="lp-wrap row">
+    <a class="lp-brand" href={`${base}/#top`}><span class="mark"><svg viewBox="159 140 76 76" fill="currentColor" aria-hidden="true"><path d="M235,159L235,197C235,207.486 226.486,216 216,216L178,216C167.514,216 159,207.486 159,197L159,159C159,148.514 167.514,140 178,140L216,140C226.486,140 235,148.514 235,159ZM203.259,151.176C191.415,151.176 181.8,160.792 181.8,172.635C181.8,184.479 191.415,194.094 203.259,194.094C215.102,194.094 224.718,184.479 224.718,172.635C224.718,160.792 215.102,151.176 203.259,151.176Z"/></svg></span>Pingr</a>
+    <div class="sp"></div>
+    <div class="nauth">
+      <div class="relative group/lang" data-lang>
+        <button
+          type="button"
+          class="inline-flex items-center gap-[6px] cursor-pointer font-mono text-[11px] tracking-[.04em] text-fg-muted bg-transparent border-none rounded-full px-[2px] py-[5px] transition-colors duration-[150ms] hover:text-fg group-data-[open=true]/lang:text-fg"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-label="Language"
+        >
+          <svg class="w-[13px] h-[13px] fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 0c2.5 2 4 5 4 9s-1.5 7-4 9m0-18c-2.5 2-4 5-4 9s1.5 7 4 9M3.5 9h17M3.5 15h17"/></svg>
+          <span class="font-medium">{languages[lang]}</span>
+          <svg class="w-[11px] h-[11px] fill-none stroke-current stroke-2 transition-transform duration-200 group-data-[open=true]/lang:rotate-180" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div
+          class="absolute top-[calc(100%+8px)] right-0 min-w-[168px] p-[5px] bg-bg-raised border border-solid border-border-strong rounded-[12px] shadow-[0_12px_40px_rgba(0,0,0,.4)] z-[60] origin-top-right opacity-0 -translate-y-[6px] scale-[.98] pointer-events-none transition-all duration-[150ms] group-data-[open=true]/lang:opacity-100 group-data-[open=true]/lang:translate-y-0 group-data-[open=true]/lang:scale-100 group-data-[open=true]/lang:pointer-events-auto"
+          role="menu"
+        >
+          {(Object.keys(languages) as Lang[]).map((code) => (
+            <a
+              href={`${code === defaultLang ? "/" : "/" + code}`}
+              role="menuitem"
+              hreflang={code}
+              class:list={[
+                "flex items-center gap-[9px] px-[9px] py-[7px] rounded-[8px] text-[13px] no-underline transition-colors duration-[120ms]",
+                code === lang ? "text-fg bg-bg-hover" : "text-fg-muted hover:bg-bg-hover hover:text-fg",
+              ]}
+            >
+              <span class={`w-[6px] h-[6px] rounded-full flex-none ${code === lang ? "bg-accent" : "bg-transparent"}`}></span>
+              <span class={`font-mono text-[10.5px] tracking-[.04em] w-[22px] ${code === lang ? "text-accent" : "text-fg-dim"}`}>{languages[code]}</span>
+              <span class="flex-1">{languageNames[code]}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<span id="top"></span>
+
+<script>
+  // Language dropdown — toggle on click, close on outside-click / Esc.
+  // State lives on the wrapper as data-open="true|false"; UnoCSS variants
+  // (group-data-[open=true], data-[open=true]) drive the visuals.
+  document.querySelectorAll("[data-lang]").forEach((wrap) => {
+    const btn = wrap.querySelector("button");
+    if (!btn) return;
+    const setOpen = (v) => {
+      wrap.setAttribute("data-open", v ? "true" : "false");
+      btn.setAttribute("aria-expanded", v ? "true" : "false");
+    };
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setOpen(wrap.getAttribute("data-open") !== "true");
+    });
+    document.addEventListener("click", (e) => { if (!wrap.contains(e.target)) setOpen(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  });
+</script>

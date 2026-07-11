@@ -1,0 +1,157 @@
+---
+// Hero: headline, CTA, and the macOS menu-bar desktop scene with a live popover.
+import { useTranslations, langPath, type Lang } from "../../i18n/ui";
+import AppMock from "./AppMock.astro";
+import NotificationRow from "./NotificationRow.astro";
+import BrandIcon from "./BrandIcon.astro";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = langPath(lang);
+---
+<header class="lp-hero" id="hero">
+  <script is:inline>document.documentElement.classList.add('js-anim')</script>
+  <div class="lp-wrap inner">
+    <h1 class="lp-h1" set:html={t("hero_h1")} />
+    <div class="cta">
+      <a class="lp-btn pri" href={`${base}/#download`} set:html={t("hero_cta1")} />
+    </div>
+    <div class="meta">
+      <span set:html={t("hero_m1")} />
+      <span set:html={t("hero_m2")} />
+    </div>
+  </div>
+
+  <!-- desktop / menu-bar scene -->
+  <div class="lp-wrap">
+    <div class="lp-scene">
+      <div class="lp-wall">
+        <div class="macbar">
+          <div class="l"><span class="apple"><svg viewBox="0 0 24 24" width="18" height="22" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg></span><span style="font-weight:500">Finder</span><span class="mitm">File</span><span class="mitm">Edit</span><span class="mitm">View</span><span class="mitm">Go</span><span class="mitm">Window</span></div>
+          <div class="r">
+            <span class="pingr-tray"><span class="ic"><BrandIcon size={12} /></span><span class="n" data-count>0</span></span>
+            <span style="opacity:.7">100%</span>
+            <span style="opacity:.7">Mon 14:02</span>
+          </div>
+        </div>
+
+        <div class="lp-pop-drop">
+          <AppMock height={785} view="inbox" state="Synced · 14:02" hint="⌘K">
+            <div class="filters">
+              <button class="filter on">All · <span data-count>0</span></button>
+              <button class="filter"><span class="cdot" style="background:var(--ch-github)"></span>GitHub</button>
+              <button class="filter"><span class="cdot" style="background:var(--ch-slack)"></span>Slack</button>
+              <button class="filter"><span class="cdot" style="background:var(--ch-gmail)"></span>Gmail</button>
+            </div>
+            <div class="scroll">
+              <div class="sh"><div class="sh-t">Today</div><div class="sh-m"><span data-count>0</span> new</div></div>
+              <div data-hero-feed>
+                <NotificationRow initials="AL" channel="github" source="GitHub · PR" time="14:02" title="#4412 · Fix scheduler race on worker exit" preview="Ada · review requested · 3 comments" unread />
+                <NotificationRow initials="GR" channel="slack" source="Slack · #eng-deploys" time="13:51" title="Grace: pushing the deploy tonight · reviews?" preview="#eng-deploys · 4 unread" unread />
+                <NotificationRow initials="SM" channel="gmail" source="Gmail" time="13:48" title="Security alert · new sign-in on macOS" preview="noreply@pingr.dev · review activity" unread />
+                <NotificationRow initials="LT" channel="whatsapp" source="WhatsApp · Group" time="12:10" title="Design crit · move to 4pm?" preview="Grace, Linus, +2 · 12 unread" unread />
+              </div>
+            </div>
+          </AppMock>
+        </div>
+
+        <div class="caption">
+          <div class="t">{t("scene_cap")}</div>
+          <div class="s">{t("scene_cap_s")}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Hero live feed — runs only when home is active (no hash or #hero).
+  import { animate } from "motion";
+  const feed = document.querySelector("[data-hero-feed]");
+  if (feed) {
+    const rows = Array.from(feed.querySelectorAll(".nrow"));
+    const counts = Array.from(document.querySelectorAll("[data-count]"));
+    const STEP = 1.1;
+    const DUR = 0.5;
+    const HOLD = 2.4;
+    const CLEAR = 0.6;
+    const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+    const setCount = (v) => counts.forEach((c) => (c.textContent = String(v)));
+    const hide = () => rows.forEach((r) => animate(r, { opacity: 0, y: 8 }, { duration: 0 }));
+    let n = 0;
+
+    const arrive = () =>
+      Promise.all(
+        rows.map((row, i) =>
+          new Promise((res) =>
+            animate(row, { opacity: [0, 1], y: [8, 0] }, {
+              duration: DUR,
+              delay: i * STEP,
+              ease: "ease-out",
+              onComplete: () => { n += 1; setCount(n); res(); },
+            })
+          )
+        )
+      );
+
+    const clear = () =>
+      Promise.all(
+        rows.map((row) =>
+          new Promise((res) =>
+            animate(row, { opacity: [1, 0], y: [0, -8] }, {
+              duration: CLEAR,
+              ease: "ease-in",
+              onComplete: res,
+            })
+          )
+        )
+      ).then(() => { n = 0; setCount(0); });
+
+    let stopped = false;
+
+    function runLoop() {
+      (async () => {
+        while (!stopped) {
+          await arrive();
+          if (stopped) break;
+          await wait(HOLD);
+          if (stopped) break;
+          await clear();
+        }
+      })();
+    }
+
+    function stopLoop() {
+      stopped = true;
+      hide();
+      n = 0;
+      setCount(0);
+    }
+
+    function startLoop() {
+      if (stopped) {
+        stopped = false;
+        n = 0;
+        rows.forEach((r) => animate(r, { opacity: 0, y: 8 }, { duration: 0 }));
+        runLoop();
+      }
+    }
+
+    // Active when: no hash (home) or #hero
+    const isActive = () => !location.hash || location.hash === "#hero";
+
+    if (isActive()) {
+      runLoop();
+    } else {
+      stopped = true;
+    }
+
+    window.addEventListener("hashchange", () => {
+      if (isActive()) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    });
+  }
+</script>

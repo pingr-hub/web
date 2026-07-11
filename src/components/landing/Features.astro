@@ -1,0 +1,408 @@
+---
+// Feature trio: unified inbox, local search, and snooze/attention · each with a mock popover.
+// Mock popover content is static product-demo data and is intentionally not translated.
+import { useTranslations, type Lang } from "../../i18n/ui";
+import AppMock from "./AppMock.astro";
+import NotificationRow from "./NotificationRow.astro";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section class="lp-section" id="features">
+  <div class="lp-wrap">
+
+    <!-- F1 · unified inbox -->
+    <div class="lp-feature">
+      <div class="lp-copy">
+        <span class="lp-eyebrow">{t("f1_eye")}</span>
+        <h2 class="lp-h2" set:html={t("f1_h2")} />
+        <p class="lp-lead" set:html={t("f1_lead")} />
+        <ul class="lp-ul">
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f1_b1")} /></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f1_b3")} /></li>
+        </ul>
+      </div>
+      <div class="lp-mock" id="inbox">
+        <span class="tagchip">Inbox</span>
+        <AppMock width={376} height={785} view="inbox" state="Synced · 14:02" hint="⌘K">
+          <div class="filters" data-f1-filters><button class="filter on" data-f="all">All · 12</button><button class="filter" data-f="github"><span class="cdot" style="background:var(--ch-github)"></span>GitHub</button><button class="filter" data-f="slack"><span class="cdot" style="background:var(--ch-slack)"></span>Slack</button><button class="filter" data-f="whatsapp"><span class="cdot" style="background:var(--ch-whatsapp)"></span>WhatsApp</button></div>
+          <div class="scroll">
+            <div class="sh"><div class="sh-t">Today</div><div class="sh-m"><span data-f1-new>12</span> new</div></div>
+            <div data-f1-rows>
+              <NotificationRow initials="AL" channel="github" source="GitHub · PR" time="14:02" title="#4412 · Fix scheduler race on worker exit" preview="Ada · review requested" unread data-ch="github" />
+              <NotificationRow initials="GR" channel="slack" source="Slack · #eng-deploys" time="13:51" title="Pushing the deploy tonight · reviews?" preview="Grace, Linus, +3 · 4 unread" unread data-ch="slack" />
+              <NotificationRow initials="LT" channel="whatsapp" source="WhatsApp · Group" time="12:10" title="Design crit · move to 4pm?" preview="Grace, Linus, +2 · 12 unread" unread data-ch="whatsapp" />
+              <NotificationRow initials="#2" channel="github" source="GitHub · Issue" time="11:55" title="#2290 · Password reset fails in prod" preview="High priority · unassigned" unread data-ch="github" />
+              <NotificationRow initials="GR" channel="slack" source="Slack" time="10:22" title="staging is green · ship it?" preview="Grace · #eng-deploys · 2 unread" unread data-ch="slack" />
+              <NotificationRow initials="MA" channel="whatsapp" source="WhatsApp · Direct" time="09:48" title="Marco: sent the contract over" preview="1 attachment · just now" unread data-ch="whatsapp" />
+            </div>
+          </div>
+        </AppMock>
+      </div>
+    </div>
+
+    <!-- F2 · search -->
+    <div class="lp-feature rev">
+      <div class="lp-copy">
+        <span class="lp-eyebrow">{t("f2_eye")}</span>
+        <h2 class="lp-h2" set:html={t("f2_h2")} />
+        <p class="lp-lead" set:html={t("f2_lead")} />
+        <ul class="lp-ul">
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f2_b1")} /></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f2_b2")} /></li>
+        </ul>
+        <div class="lp-stats">
+          <div class="lp-stat"><div class="n">14,208</div><div class="l">{t("f2_s1")}</div></div>
+          <div class="lp-stat"><div class="n">&lt;<span class="u">5</span> ms</div><div class="l">{t("f2_s2")}</div></div>
+          <div class="lp-stat"><div class="n">62 MB</div><div class="l">{t("f2_s3")}</div></div>
+        </div>
+      </div>
+      <div class="lp-mock" id="search">
+        <span class="tagchip">Search · ⌘K</span>
+        <AppMock width={376} height={785} view="inbox" state="Synced · 14:02" hint="⌘K">
+          <div class="sh-hd"><div class="search-full"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input data-f2-input value="deploy" readonly></div><span class="close">ESC</span></div>
+          <div class="scroll">
+            <div class="sh"><div class="sh-t">Recent</div><div class="sh-m"><span data-f2-count>0</span> matches</div></div>
+            <div data-f2-rows>
+              <NotificationRow initials="CI" channel="github" source="GitHub Actions" time="2m" title="deploy.yml failed on main" preview="ci-bot · exit 137 · worker timeout" data-q="deploy" data-title="deploy.yml failed on main" data-preview="ci-bot · exit 137 · worker timeout" />
+              <NotificationRow initials="DM" channel="github" source="GitHub · PR" time="14:02" title="demo environment spin-up" preview="Ada · review requested · 2 comments" data-q="demo" data-title="demo environment spin-up" data-preview="Ada · review requested · 2 comments" />
+              <NotificationRow initials="DS" channel="slack" source="Slack · #design" time="13:51" title="design system v2 tokens" preview="Grace, Linus, +3 · 4 unread" data-q="design" data-title="design system v2 tokens" data-preview="Grace, Linus, +3 · 4 unread" />
+              <NotificationRow initials="DY" channel="gmail" source="Gmail" time="12:10" title="daily build report" preview="noreply@ci.dev · all green" data-q="daily" data-title="daily build report" data-preview="noreply@ci.dev · all green" />
+            </div>
+            <div class="sug-group">
+              <div class="sug-label">Quick filters</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;padding:4px 0 12px">
+                <button class="filter">is:unread</button>
+                <button class="filter">from:ada</button>
+                <button class="filter">channel:slack</button>
+              </div>
+            </div>
+          </div>
+        </AppMock>
+      </div>
+    </div>
+
+    <!-- F3 · snooze / attention -->
+    <div class="lp-feature">
+      <div class="lp-copy">
+        <span class="lp-eyebrow">{t("f3_eye")}</span>
+        <h2 class="lp-h2" set:html={t("f3_h2")} />
+        <p class="lp-lead" set:html={t("f3_lead")} />
+        <ul class="lp-ul">
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f3_b1")} /></li>
+          <li><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("f3_b2")} /></li>
+        </ul>
+      </div>
+      <div class="lp-mock" id="snooze">
+        <span class="tagchip">Snooze · inline</span>
+        <AppMock width={376} height={785} view="inbox" state="Synced · 14:02" hint="⇧⇥">
+          <div class="filters"><button class="filter on">All · 12</button><button class="filter">GitHub · 5</button><button class="filter">Slack</button></div>
+          <div class="scroll">
+            <div class="sh"><div class="sh-t">Today</div><div class="sh-m">12 new</div></div>
+            <div>
+              <NotificationRow initials="AL" channel="github" source="GitHub · PR" time="14:02" title="#4412 · Fix scheduler race" preview="Ada · review requested" unread highlight data-f3-row data-q="deploy" />
+              <div class="snooze-inline" data-f3-panel style="display:none">
+                <div class="hd"><div class="t">Snooze until</div><div class="s">#4412 · GitHub</div></div>
+                <div class="chips">
+                  <button class="cbtn" data-f3-chip="1h">1h · 15:02</button>
+                  <button class="cbtn" data-f3-chip="3h">3h · 17:02</button>
+                  <button class="cbtn" data-f3-chip="tonight">Tonight · 19:00</button>
+                  <button class="cbtn" data-f3-chip="tomorrow">Tomorrow · 09:00</button>
+                  <button class="cbtn" data-f3-chip="next-mon">Next Mon</button>
+                </div>
+              </div>
+              <NotificationRow initials="SM" channel="gmail" source="Gmail" time="13:48" title="Security alert · new sign-in" preview="noreply@pingr.dev" />
+            </div>
+          </div>
+        </AppMock>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // F1 · unified inbox — auto-cycle the active filter (All → GitHub → Slack →
+  // WhatsApp → All…) and swap the visible rows to match the channel. All shows
+  // everything; a channel filter shows only that channel's rows. Filter + rows
+  // both have transition-colors so the switch feels smooth. Runs while in view.
+  import { animate } from "motion";
+  const filtersEl = document.querySelector("[data-f1-filters]");
+  const rowsEl = document.querySelector("[data-f1-rows]");
+  const newEl = document.querySelector("[data-f1-new]");
+  if (filtersEl && rowsEl) {
+    const filters = Array.from(filtersEl.querySelectorAll(".filter"));
+    const rows = Array.from(rowsEl.querySelectorAll(".nrow"));
+    const DWELL = 2.0; // seconds each filter stays active
+    const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+    let showing = null;
+    const show = (f) => {
+      if (f === showing) return Promise.resolve();
+      showing = f;
+      let count = 0;
+      const rows = Array.from(rowsEl.querySelectorAll(".nrow"));
+      const matchRows = [];
+      const unmatchRows = [];
+      rows.forEach((row, i) => {
+        const match = f === "all" || row.dataset.ch === f;
+        if (match) {
+          count += 1;
+          matchRows.push({ row, i });
+        } else {
+          unmatchRows.push(row);
+        }
+      });
+      // First: animate OUT unmatching rows, wait for all to complete
+      const outPromises = unmatchRows.map((row) =>
+        animate(row, { opacity: [1, 0], x: [0, 30] }, {
+          duration: 0.25, ease: "ease-in",
+        }).finished.then(() => { row.style.display = "none"; })
+      );
+      return Promise.all(outPromises).then(() => {
+        // Then: animate IN matching rows with stagger
+        matchRows.forEach(({ row, i }) => {
+          row.style.display = "";
+          animate(row, { opacity: [0, 1], x: [-30, 0] }, {
+            duration: 0.35, delay: i * 0.06, ease: "ease-out",
+          });
+        });
+        if (newEl) newEl.textContent = String(count);
+      });
+    };
+    const order = filters.map((b) => b.dataset.f);
+    let stopped = false;
+    let i = 0;
+    const cycle = async () => {
+      while (!stopped) {
+        const f = order[i];
+        show(f).then(() => {
+          if (!stopped) filters.forEach((b) => b.classList.toggle("on", b.dataset.f === f));
+        });
+        i = (i + 1) % order.length;
+        await wait(DWELL);
+      }
+    };
+    const startCycle = () => { if (stopped) { stopped = false; cycle(); } };
+    const stopCycle = () => { stopped = true; };
+
+    // Active when: hash is #inbox
+    const isActive = () => location.hash === "#inbox";
+
+    if (isActive()) cycle();
+    else stopped = true;
+
+    window.addEventListener("hashchange", () => {
+      if (isActive()) startCycle();
+      else stopCycle();
+    });
+  }
+
+  // F2 · search — type each query letter-by-letter and live-filter rows as the
+  // prefix grows (d → de → dep → depl → deploy). Rows whose data-q starts with
+  // the current input show (slide in); the rest hide (slide out). After the full
+  // query, hold, then clear and move to the next query. #search hash only.
+  {
+    const input = document.querySelector("[data-f2-input]");
+    const countEl = document.querySelector("[data-f2-count]");
+    const rowsEl = document.querySelector("[data-f2-rows]");
+    if (input && rowsEl) {
+      const rows = Array.from(rowsEl.querySelectorAll(".nrow"));
+      const queries = ["deploy"];
+      const TYPE_MS = 220;
+      const HOLD = 1.4;
+      const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+      let qIdx = 0;
+      let stopped = false;
+
+      rows.forEach((row) => { row.style.display = "none"; });
+
+      // Wrap case-insensitive matches of `term` inside `text` with <mark>.
+      const markHtml = (text, term) => {
+        if (!term) return text;
+        const t = term.toLowerCase();
+        const low = text.toLowerCase();
+        let out = "";
+        let i = 0;
+        while (i < text.length) {
+          const idx = low.indexOf(t, i);
+          if (idx === -1) { out += text.slice(i); break; }
+          if (idx > i) out += text.slice(i, idx);
+          out += `<mark>${text.slice(idx, idx + term.length)}</mark>`;
+          i = idx + term.length;
+        }
+        return out;
+      };
+
+      // Live-filter: show rows whose data-q starts with prefix, hide the rest.
+      // Also highlight the typed prefix inside each visible row's title/preview.
+      const filter = (prefix) => {
+        let count = 0;
+        rows.forEach((row) => {
+          const q = (row.dataset.q || "").toLowerCase();
+          const p = (prefix || "").toLowerCase();
+          const match = p.length > 0 && q.startsWith(p);
+          const visible = row.style.display !== "none";
+          if (match && !visible) {
+            row.style.display = "";
+            row.style.opacity = "0";
+            animate(row, { opacity: [0, 1] }, { duration: 0.18, ease: "ease-out" });
+          } else if (!match && visible) {
+            animate(row, { opacity: [1, 0] }, {
+              duration: 0.14, ease: "ease-in",
+              onComplete: () => { row.style.display = "none"; },
+            });
+          }
+          if (match) {
+            count += 1;
+            const ti = row.querySelector(".rti");
+            const pv = row.querySelector(".rpv");
+            if (ti) ti.innerHTML = markHtml(row.dataset.title || "", prefix);
+            if (pv) pv.innerHTML = markHtml(row.dataset.preview || "", prefix);
+          }
+        });
+        if (countEl) countEl.textContent = String(count);
+      };
+
+      const typeQuery = (q) =>
+        new Promise((resolve) => {
+          input.value = "";
+          let i = 0;
+          const tick = () => {
+            if (stopped) return resolve();
+            input.value = q.slice(0, i + 1);
+            filter(input.value);
+            i += 1;
+            if (i < q.length) setTimeout(tick, TYPE_MS);
+            else resolve();
+          };
+          tick();
+        });
+
+      const clearRows = () =>
+        Promise.all(
+          rows.filter((r) => r.style.display !== "none").map((row) =>
+            new Promise((res) =>
+              animate(row, { opacity: [1, 0] }, {
+                duration: 0.14, ease: "ease-in",
+                onComplete: () => { row.style.display = "none"; res(); },
+              })
+            )
+          )
+        ).then(() => { if (countEl) countEl.textContent = "0"; });
+
+      const cycle = async () => {
+        while (!stopped) {
+          const q = queries[qIdx];
+          await typeQuery(q);
+          if (stopped) break;
+          await wait(HOLD);
+          if (stopped) break;
+          await clearRows();
+        }
+      };
+
+      const isActive = () => location.hash === "#search";
+      if (isActive()) cycle();
+      else stopped = true;
+
+      window.addEventListener("hashchange", () => {
+        if (isActive() && stopped) {
+          stopped = false;
+          rows.forEach((row) => { row.style.display = "none"; });
+          input.value = "";
+          if (countEl) countEl.textContent = "0";
+          cycle();
+        } else if (!isActive() && !stopped) {
+          stopped = true;
+        }
+      });
+    }
+  }
+</script>
+
+<script>
+  // F3 · snooze — auto-cycle: panel opens → chip selected → panel closes →
+  // row fades to 0.4 + gains snooze badge. Loops while #snooze is active.
+  import { animate } from "motion";
+  const panel = document.querySelector("[data-f3-panel]");
+  const row = document.querySelector("[data-f3-row]");
+  if (panel && row) {
+    const chips = Array.from(panel.querySelectorAll("[data-f3-chip]"));
+    const DWELL = 1.3;  // panel open time
+    const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+    let stopped = false;
+    let running = false;
+    let chipIdx = 0;
+
+    const setBadge = (label) => {
+      let badge = row.querySelector(".snooze-badge");
+      if (!badge) {
+        badge = document.createElement("span");
+        badge.className = "snooze-badge";
+        row.querySelector(".rt").appendChild(badge);
+      }
+      badge.innerHTML = `<svg viewBox="0 0 24 24" width="10" height="10"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${label}`;
+      // fade-in on next frame so the transition (defined in GlobalStyles) runs
+      badge.classList.remove("in");
+      requestAnimationFrame(() => requestAnimationFrame(() => badge.classList.add("in")));
+    };
+
+    const cycle = async () => {
+      if (running) return;
+      running = true;
+      while (!stopped) {
+        // open panel — soft slide up
+        panel.style.display = "";
+        await animate(panel, { opacity: [0, 1], y: [16, 0] }, { duration: 0.45, ease: "ease-out" });
+
+        // pick chip, mark .on
+        const chip = chips[chipIdx];
+        chips.forEach((c) => c.classList.toggle("on", c === chip));
+        const label = chip.dataset.f3Chip;
+
+        // hold
+        await wait(DWELL);
+
+        // close panel — soft slide away
+        await animate(panel, { opacity: [1, 0], y: [0, -16] }, { duration: 0.4, ease: "ease-in-out" });
+        panel.style.display = "none";
+
+        // row: gently fade to 0.45 + fade-in badge
+        row.style.transition = "opacity 0.5s ease";
+        row.style.opacity = "0.45";
+        setBadge(label);
+
+        // wait before next cycle
+        await wait(1.0);
+
+        // reset row for next cycle (opacity back, remove badge)
+        row.style.opacity = "1";
+        const badge = row.querySelector(".snooze-badge");
+        if (badge) badge.remove();
+
+        chipIdx = (chipIdx + 1) % chips.length;
+      }
+      running = false;
+    };
+
+    // Active only on #snooze. hashchange (driven by the landing scroll-spy) starts
+    // the cycle when the section scrolls into view and stops it when it leaves.
+    // NOTE: do NOT use motion's inView() here — its leave callback fires mid-scroll
+    // and kills the loop after the first chip, so the demo never re-loops.
+    const isActive = () => location.hash === "#snooze";
+    if (isActive()) { stopped = false; cycle(); }
+
+    window.addEventListener("hashchange", () => {
+      if (isActive()) {
+        if (stopped && !running) { stopped = false; cycle(); }
+      } else {
+        stopped = true;
+        panel.style.display = "none";
+        row.style.opacity = "1";
+        const b = row.querySelector(".snooze-badge");
+        if (b) b.remove();
+        chips.forEach((c) => c.classList.remove("on"));
+      }
+    });
+  }
+</script>

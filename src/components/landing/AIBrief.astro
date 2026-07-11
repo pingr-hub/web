@@ -1,0 +1,379 @@
+---
+// AI daily brief spotlight · summary, tasks, watch-outs, reminders in a mock popover.
+// Mock popover content is static product-demo data and is intentionally not translated.
+import { useTranslations, type Lang } from "../../i18n/ui";
+import AppMock from "./AppMock.astro";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const spark = "M12 2c.5 5 2.5 7 7 7.5-4.5.5-6.5 2.5-7 7.5-.5-5-2.5-7-7-7.5 4.5-.5 6.5-2.5 7-7.5z";
+---
+<section class="lp-section" id="brief" style="border-top:1px solid var(--border);background:linear-gradient(180deg, rgba(198,184,244,.04), transparent 30%)">
+  <div class="lp-wrap">
+    <div class="lp-feature rev">
+      <div class="lp-copy">
+        <span class="lp-eyebrow ai"><span class="spark"><svg viewBox="0 0 24 24" style="fill:currentColor"><path d={spark}/></svg></span><span>{t("br_eye")}</span></span>
+        <h2 class="lp-h2" set:html={t("br_h2")} />
+        <p class="lp-lead" set:html={t("br_lead")} />
+        <ul class="lp-ul">
+          <li><span class="ic ai"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("br_b1")} /></li>
+          <li><span class="ic ai"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span set:html={t("br_b2")} /></li>
+        </ul>
+      </div>
+      <div class="lp-mock ai">
+        <span class="tagchip">Daily brief · AI</span>
+        <AppMock width={392} height={785} view="brief" state="Synced · 14:02" hint="R">
+          <div class="scroll" data-brief>
+            <div class="brief">
+              <div class="brief-head"><span class="ai-eyebrow"><span class="spark"><svg viewBox="0 0 24 24"><path d={spark}/></svg></span>AI daily brief</span><span class="brief-date">Mon · Jul 6</span></div>
+              <div class="brief-greet" data-brief-el>Good afternoon, Ada.</div>
+              <div class="brief-card" data-brief-el>
+                <div class="brief-body">A calmer start than most Mondays. Your first move is <span class="hl">#4412</span> · it blocks the fairness fix Linus already merged. Ticket <span class="hl">#2290</span> is running down a 2-hour SLA. Grace wants a yes on the <b>4pm</b> crit.</div>
+                <div class="brief-meta"><span class="live"></span>Generated 14:02 · AI</div>
+              </div>
+            </div>
+            <div class="ai-mod" data-brief-el>
+              <div class="ai-mod-h"><span class="ai-mod-t">Tasks <span class="n">/ 4</span></span><span class="ai-mod-m">3 open</span></div>
+              <div class="ai-list">
+                <div class="task-row"><div class="check"></div><div class="task-b"><div class="tt">Review PR #4412 · scheduler race</div><div class="task-src"><span class="sw-dot" style="background:var(--ch-github)"></span>GitHub · Ada</div></div><span class="task-when">now</span></div>
+                <div class="task-row"><div class="check"></div><div class="task-b"><div class="tt">Resolve issue #2290 · password reset</div><div class="task-src"><span class="sw-dot" style="background:var(--ch-github)"></span>GitHub · High</div></div><span class="task-when">13:55</span></div>
+              </div>
+            </div>
+            <div class="ai-mod" data-brief-el>
+              <div class="ai-mod-h"><span class="ai-mod-t">Watch-outs <span class="n">/ 3</span></span><span class="ai-mod-m">1 urgent</span></div>
+              <div class="ai-list">
+                <div class="watch-row"><div class="sev"><svg viewBox="0 0 24 24"><path d="M12 3.5L2.5 20.5h19z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></div><div class="watch-b"><div class="wt">Issue #2290 is critical and still unassigned</div><div class="ws">GitHub · High priority</div></div><span class="watch-when">2h</span></div>
+              </div>
+            </div>
+            <div class="ai-mod" data-brief-el style="padding-bottom:12px">
+              <div class="ai-mod-h"><span class="ai-mod-t">Reminders <span class="n">/ 3</span></span><span class="ai-mod-m">1 suggested</span></div>
+              <div class="ai-list">
+                <div class="remind-row"><span class="remind-time">15:30</span><span class="remind-t">Follow up with Ada if the PR still has no review</span><span class="remind-ico ai"><svg viewBox="0 0 24 24"><path d={spark}/></svg></span></div>
+              </div>
+            </div>
+          </div>
+        </AppMock>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // AIBrief — "AI is generating" demo loop: shimmering skeleton → typed brief
+  // body (char-by-char with a blinking caret) → highlighted terms pulse in
+  // sequence → the task/watch/reminders modules fade in → hold → restart.
+  // Runs only while #brief is active (driven by the landing scroll-spy).
+  // NOTE: do NOT use motion's inView() — its leave callback fires mid-scroll
+  // and kills the loop; hashchange is the reliable trigger (same as F3).
+  import { animate } from "motion";
+  const root = document.querySelector("[data-brief]");
+  if (root) {
+    const bodyEl = root.querySelector(".brief-body");
+    const metaEl = root.querySelector(".brief-meta");
+    const els = Array.from(root.querySelectorAll("[data-brief-el]"));
+    const HOLD = 3.0;
+    const SKEL_MS = 500;     // "thinking" shimmer before typing
+    const TYPE_MS = 12;      // per-character
+    const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+    const ms = (n) => new Promise((r) => setTimeout(r, n));
+
+    // Snapshot the rich HTML (colored .hl / <b>) so we can type plain text,
+    // then restore the styled markup and pulse the highlights.
+    const richHTML = bodyEl ? bodyEl.innerHTML : "";
+    const plain = bodyEl ? bodyEl.textContent : "";
+    const highlights = bodyEl ? Array.from(bodyEl.querySelectorAll(".hl")) : [];
+
+    let stopped = false;
+    let running = false;
+
+    // Skeleton block sized to the body's natural height.
+    const skel = document.createElement("div");
+    skel.className = "ai-skel";
+    skel.style.height = "100%";
+    skel.style.minHeight = "54px";
+
+    // data-brief-el grouping: header-ish (greet, card) vs the three modules.
+    const modules = els.filter((el) => el.classList.contains("ai-mod"));
+    const header = els.filter((el) => !el.classList.contains("ai-mod"));
+
+    // Per-module skeleton: snapshot each module's list rows, replace them with
+    // shimmering lines, then swap back to the real markup after a short "loading".
+    const modState = modules.map((mod) => {
+      const list = mod.querySelector(".ai-list");
+      const rows = list ? Array.from(list.children) : [];
+      return { mod, list, realHTML: list ? list.innerHTML : "", rows };
+    });
+
+    const skelLine = (w) => {
+      const s = document.createElement("div");
+      s.className = "ai-skel line";
+      s.style.width = (w || 70) + "%";
+      return s;
+    };
+
+    const showModSkeletons = () => {
+      modState.forEach(({ list, rows }) => {
+        if (!list) return;
+        list.innerHTML = "";
+        rows.forEach((row, i) => {
+          // each row is rendered as 1–2 stacked shimmer lines + spacing
+          const wrap = document.createElement("div");
+          wrap.style.display = "flex";
+          wrap.style.flexDirection = "column";
+          wrap.style.gap = "6px";
+          wrap.style.padding = "8px 0";
+          wrap.appendChild(skelLine(70));
+          wrap.appendChild(skelLine(45));
+          list.appendChild(wrap);
+        });
+      });
+    };
+
+    const restoreModContent = () => {
+      modState.forEach(({ list, realHTML }) => {
+        if (!list) return;
+        list.innerHTML = realHTML;
+      });
+    };
+
+    const hideAll = () => {
+      els.forEach((el) => { el.style.opacity = "0"; el.style.transform = "translateY(12px)"; });
+      if (metaEl) metaEl.style.opacity = "0";
+    };
+
+    const reset = () => {
+      stopped = true;
+      running = false;
+      hideAll();
+      if (bodyEl) bodyEl.innerHTML = richHTML;
+      highlights.forEach((h) => h.classList.remove("pulse"));
+      restoreModContent();
+      skel.remove();
+    };
+
+    const typeBody = async () => {
+      if (!bodyEl) return;
+      bodyEl.innerHTML = "";
+      const caret = document.createElement("span");
+      caret.className = "ai-caret";
+      bodyEl.appendChild(caret);
+      for (let i = 0; i < plain.length; i++) {
+        if (stopped) return;
+        caret.insertAdjacentText("beforebegin", plain[i]);
+        await ms(TYPE_MS);
+      }
+      caret.remove();
+      // restore styled markup (so #4412 / #2290 / <b>4pm</b> get their color)
+      bodyEl.innerHTML = richHTML;
+    };
+
+    const pulseHighlights = async () => {
+      // re-query after innerHTML restore
+      const hls = bodyEl ? Array.from(bodyEl.querySelectorAll(".hl")) : [];
+      for (const h of hls) {
+        if (stopped) return;
+        h.classList.add("pulse");
+        await ms(220);
+      }
+      if (!stopped) await ms(500);
+      hls.forEach((h) => h.classList.remove("pulse"));
+    };
+
+    const cycle = async () => {
+      if (running) return;
+      running = true;
+      while (!stopped) {
+        // 0) everything hidden to start the cycle clean
+        hideAll();
+
+        // 1) header (greet + card) fade in, body shows skeleton shimmer — "thinking"
+        if (bodyEl) {
+          bodyEl.innerHTML = "";
+          bodyEl.appendChild(skel);
+        }
+        await Promise.all(
+          header.map((el, i) =>
+            new Promise((res) =>
+              animate(el, { opacity: [0, 1], y: [12, 0] }, {
+                duration: 0.35, delay: i * 0.1, ease: "ease-out", onComplete: res,
+              })
+            )
+          )
+        );
+        await ms(SKEL_MS);
+        if (stopped) break;
+
+        // 2) type the brief body
+        await typeBody();
+        if (stopped) break;
+        // meta (Generated 14:02 · AI) fades in with the live dot
+        if (metaEl) animate(metaEl, { opacity: [0, 1] }, { duration: 0.35, ease: "ease-out" });
+
+        // 3) highlight terms pulse
+        await pulseHighlights();
+        if (stopped) break;
+
+        // 4) modules fade in (with shimmering skeleton rows), then load real content
+        showModSkeletons();
+        await Promise.all(
+          modules.map((el, i) =>
+            new Promise((res) =>
+              animate(el, { opacity: [0, 1], y: [12, 0] }, {
+                duration: 0.35, delay: i * 0.15, ease: "ease-out", onComplete: res,
+              })
+            )
+          )
+        );
+        await ms(650); // brief "loading" beat
+        if (stopped) break;
+        restoreModContent();
+
+        // 5) hold, then fade everything out
+        await wait(HOLD);
+        if (stopped) break;
+        await Promise.all(
+          els.map((el) =>
+            new Promise((res) =>
+              animate(el, { opacity: [1, 0], y: [0, -12] }, {
+                duration: 0.3, ease: "ease-in",
+                onComplete: () => { el.style.opacity = "0"; el.style.transform = "translateY(12px)"; res(); },
+              })
+            )
+          )
+        );
+      }
+      running = false;
+    };
+
+    const isActive = () => location.hash === "#brief";
+    if (isActive()) { stopped = false; cycle(); }
+
+    window.addEventListener("hashchange", () => {
+      if (isActive()) {
+        if (!running) { stopped = false; cycle(); }
+      } else {
+        reset();
+      }
+    });
+  }
+</script>
+
+<script>
+  // AskPingr — chat reveal loop with a streaming-AI feel. Each message appears
+  // in turn: "me" bubbles pop in, AI bubbles stream their text word-by-word
+  // (blinking caret) with source citations, then hold and restart.
+  // Runs only while #ask is active (driven by the landing scroll-spy).
+  // NOTE: do NOT use motion's inView() — its leave callback fires mid-scroll
+  // and kills the loop; hashchange is the reliable trigger (same as #brief).
+  import { animate } from "motion";
+  const root = document.querySelector("[data-ask]");
+  if (root) {
+    const els = Array.from(root.querySelectorAll("[data-ask-el]"));
+    const HOLD = 3.5;
+    const ME_GAP = 0.7;     // pause before a "me" message
+    const AI_THINK = 1.8;   // pause before an AI message streams ("thinking")
+    const WORD_MS = 60;     // per-word stream speed
+    const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+    const ms = (n) => new Promise((r) => setTimeout(r, n));
+
+    // Snapshot each AI bubble's rich HTML so we can stream plain text then
+    // restore the styled markup (bold + source rows).
+    const aiBubbles = els
+      .map((el) => el.querySelector("[data-ask-stream]"))
+      .filter(Boolean)
+      .map((b) => ({ bubble: b, richHTML: b.innerHTML, plain: b.textContent }));
+
+    let stopped = false;
+    let running = false;
+
+    const hideAll = () => {
+      els.forEach((el) => { el.style.opacity = "0"; el.style.transform = "translateY(10px)"; });
+    };
+
+    const reset = () => {
+      stopped = true;
+      running = false;
+      hideAll();
+      aiBubbles.forEach(({ bubble, richHTML }) => { bubble.innerHTML = richHTML; });
+    };
+
+    // Stream a bubble's plain text word-by-word with a blinking caret, then
+    // restore the rich markup (so <b> and .src-row reappear at the end).
+    const streamBubble = async ({ bubble, richHTML, plain }) => {
+      const words = plain.split(/(\s+)/); // keep whitespace tokens
+      bubble.innerHTML = "";
+      const caret = document.createElement("span");
+      caret.className = "ai-caret";
+      bubble.appendChild(caret);
+      for (const tok of words) {
+        if (stopped) return;
+        caret.insertAdjacentText("beforebegin", tok);
+        if (tok.trim()) await ms(WORD_MS);
+      }
+      caret.remove();
+      if (stopped) return;
+      bubble.innerHTML = richHTML;
+    };
+
+    const reveal = (el) =>
+      new Promise((res) =>
+        animate(el, { opacity: [0, 1], y: [10, 0] }, {
+          duration: 0.3, ease: "ease-out", onComplete: res,
+        })
+      );
+
+    const cycle = async () => {
+      if (running) return;
+      running = true;
+      while (!stopped) {
+        let aiIdx = 0;
+        hideAll();
+        aiBubbles.forEach(({ bubble, richHTML }) => { bubble.innerHTML = richHTML; });
+        for (const el of els) {
+          if (stopped) break;
+          const isAI = !!el.querySelector("[data-ask-stream]");
+          if (isAI) {
+            const aiBubble = aiBubbles[aiIdx++];
+            // show a typing indicator (bouncing dots) while the assistant "thinks"
+            if (aiBubble) aiBubble.bubble.innerHTML = '<span class="ai-dots"><i></i><i></i><i></i></span>';
+            await reveal(el);
+            if (stopped) break;
+            await wait(AI_THINK);
+            if (stopped) break;
+            if (aiBubble) await streamBubble(aiBubble);
+          } else {
+            await wait(ME_GAP);
+            if (stopped) break;
+            await reveal(el);
+          }
+        }
+        if (stopped) break;
+        await wait(HOLD);
+        if (stopped) break;
+        // fade everything out
+        await Promise.all(
+          els.map((el) =>
+            new Promise((res) =>
+              animate(el, { opacity: [1, 0], y: [0, -10] }, {
+                duration: 0.25, ease: "ease-in",
+                onComplete: () => { el.style.opacity = "0"; el.style.transform = "translateY(10px)"; res(); },
+              })
+            )
+          )
+        );
+      }
+      running = false;
+    };
+
+    const isActive = () => location.hash === "#ask";
+    if (isActive()) { stopped = false; cycle(); }
+
+    window.addEventListener("hashchange", () => {
+      if (isActive()) {
+        if (!running) { stopped = false; cycle(); }
+      } else {
+        reset();
+      }
+    });
+  }
+</script>
