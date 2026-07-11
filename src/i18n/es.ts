@@ -1,7 +1,8 @@
 // Español. Values may contain inline HTML — render with set:html.
 // Keys match en.ts exactly; empty values fall back to English (see ui.ts).
 export default {
-  nav_features: "Funciones", nav_brief: "Resumen diario", nav_ask: "Preguntar", nav_integrations: "Integraciones", nav_pricing: "Precios", nav_privacy: "Privacidad", nav_signin: "Iniciar sesión", nav_download: "Descargar para Mac",
+  nav_features: "Funciones", nav_brief: "Resumen diario", nav_ask: "Preguntar", nav_integrations: "Integraciones", nav_pricing: "Precios", nav_privacy: "Privacidad", nav_terms: "Términos", nav_refund: "Reembolso", nav_signin: "Iniciar sesión", nav_download: "Descargar para Mac",
+  legal_last_updated: "Última actualización", legal_eyebrow: "Legal",
   hero_pill: `<span class="tag">Nuevo</span> IA · resumen &amp; chat`,
   hero_h1: `Haz que tus notificaciones sean inteligentes`,
   hero_lead: `Pingr reúne GitHub, Gmail, WhatsApp, Slack y una docena más en una única bandeja en la barra de menús · gestiónalo todo desde un solo lugar, abre un resumen diario y deja que la IA te ayude a estar al día.`,

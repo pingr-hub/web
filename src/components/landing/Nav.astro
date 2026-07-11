@@ -1,10 +1,14 @@
 ---
 // Sticky top navigation with language switcher (route links) + auth actions.
-import { useTranslations, languages, languageNames, langPath, defaultLang, type Lang } from "../../i18n/ui";
+import { useTranslations, languages, languageNames, langPath, stripLocalePath, localizedHrefFor, type Lang } from "../../i18n/ui";
 interface Props { lang: Lang; }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const base = langPath(lang); // "" for en, "/es" etc.
+
+// Locale-agnostic current path, so switching language keeps the user on the
+// same page (e.g. /de/privacy → /tr/privacy), not the homepage.
+const currentPath = stripLocalePath(Astro.url.pathname);
 ---
 <nav class="lp-nav">
   <div class="lp-wrap row">
@@ -29,7 +33,7 @@ const base = langPath(lang); // "" for en, "/es" etc.
         >
           {(Object.keys(languages) as Lang[]).map((code) => (
             <a
-              href={`${code === defaultLang ? "/" : "/" + code}`}
+              href={localizedHrefFor(currentPath, code)}
               role="menuitem"
               hreflang={code}
               class:list={[
