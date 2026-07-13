@@ -1,0 +1,19 @@
+---
+// Final call-to-action band · the closing "get Pingr" section before the footer.
+// Mirrors the #download anchor so nav/pricing CTA buttons land here.
+import { useTranslations, type Lang } from "../../i18n/ui";
+interface Props { lang: Lang; }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<span id="download"></span>
+<section class="lp-section lp-final" style="border-top:1px solid var(--border)">
+  <div class="lp-wrap inner">
+    <span class="lp-eyebrow">{t("fin_eye")}</span>
+    <h2 class="lp-h1" style="font-size:clamp(34px,5vw,56px)" set:html={t("fin_h2")} />
+    <p class="lp-lead" style="text-align:center" set:html={t("fin_lead")} />
+    <div class="cta" style="display:flex;justify-content:center">
+      <a class="lp-btn pri" href="#" set:html={t("fin_cta1")} />
+    </div>
+  </div>
+</section>

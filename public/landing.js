@@ -78,9 +78,7 @@ document.addEventListener('DOMContentLoaded', function(){
   // explicit id whitelist in visual order — includes the <header> hero and the
   // <div class="lp-mock"> entries inside #features, which a generic `section[id]`
   // selector would miss. Keep in sync with section order in Landing.astro.
-  // NOTE: #privacy is not rendered on the landing page (Footer has no id), so
-  // it is intentionally absent here.
-  var IDS = ['hero', 'inbox', 'search', 'snooze', 'brief', 'ask', 'integrations', 'request', 'pricing'];
+  var IDS = ['hero', 'inbox', 'search', 'snooze', 'brief', 'ask', 'privacy', 'integrations', 'pricing', 'download', 'request'];
   var targets = [];
   for (var i = 0; i < IDS.length; i++){
     var el = document.getElementById(IDS[i]);

@@ -33,22 +33,27 @@ const integrations: Integration[] = [
 ---
 <section class="lp-section" id="integrations" style="border-top:1px solid var(--border)">
   <div class="lp-wrap">
-    <div class="ig-split">
-      <div class="ig-grid">
-        {integrations.map((it) => (
-          <div class={`ig-tile${it.soon ? " soon" : ""}`} style={`--g:${it.color}`}>
-            {it.soon && <span class="ig-badge">Soon</span>}
-            <span class="ig-logo"><img src={it.icon} alt={it.name} width={it.width} height={it.width} loading="lazy" data-mono={it.mono} data-color={it.color} /></span>
-            <div class="ig-txt"><div class="ig-name">{it.name}</div></div>
-          </div>
-        ))}
-      </div>
+    <div class="ig-head">
+      <span class="lp-eyebrow">{t("ig_eye")}</span>
+      <h2 class="lp-h2" set:html={t("ig_h2")} />
+      <p class="lp-lead" style="text-align:center" set:html={t("ig_lead")} />
+    </div>
 
-      <div class="ig-copy">
-        <span class="lp-eyebrow">{t("ig_eye")}</span>
-        <h2 class="lp-h2" set:html={t("ig_h2")} />
-        <p class="lp-lead" set:html={t("ig_lead")} />
-      </div>
+    <div class="ig-grid">
+      {integrations.map((it) => (
+        <div class={`ig-tile${it.soon ? " soon" : ""}`} style={`--g:${it.color}`}>
+          {it.soon && <span class="ig-badge">Soon</span>}
+          <span class="ig-logo"><img src={it.icon} alt={it.name} width={it.width} height={it.width} loading="lazy" data-mono={it.mono} data-color={it.color} /></span>
+          <div class="ig-txt"><div class="ig-name">{it.name}</div><div class="ig-auth">{it.auth}</div></div>
+        </div>
+      ))}
+    </div>
+
+    <div class="ig-legend">
+      <span class="item"><span class="k">OAuth</span> Gmail, Slack, X, Messenger, Discord, Linear, Notion</span>
+      <span class="item"><span class="k">Token</span> GitHub, Plane</span>
+      <span class="item"><span class="k">Bot</span> Telegram</span>
+      <span class="item"><span class="k">QR</span> WhatsApp</span>
     </div>
   </div>
 </section>

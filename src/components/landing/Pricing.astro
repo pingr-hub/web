@@ -12,7 +12,11 @@ interface Plan {
   card: string;
   nameKey: TranslationKey;
   tagKey: TranslationKey;
-  monthly: string; yearly: string; yearTotal: string;
+  monthly: string; yearly: string;
+  // TODO: yearTotal is unused now that billing labels are plain strings
+  // (pr_bill_y no longer contains a {total} placeholder). Kept for parity
+  // with the data model in case yearly totals are surfaced again.
+  yearTotal?: string;
   badge?: { key: TranslationKey; ai?: boolean };
   cta: string;
   feats: Feat[];
@@ -25,48 +29,57 @@ const plans: Plan[] = [
     card: "",
     nameKey: "pr_lite",
     tagKey: "pr_lite_tag",
-    monthly: "1.99", yearly: "1.66", yearTotal: "19.90",
+    monthly: "4.99", yearly: "4.16", yearTotal: "49.90",
     cta: "ghost",
     feats: [
-      { key: "pr_lite_f1", kind: "check" },
-      { key: "pr_lite_f2", kind: "check" },
-      { key: "pr_lite_f3", kind: "check" },
+      { key: "pr_l1", kind: "check" },
+      { key: "pr_l2", kind: "check" },
+      { key: "pr_l3", kind: "check" },
+      { key: "pr_l4", kind: "ai" },
+      { key: "pr_l5", kind: "off" },
+      { key: "pr_odp", kind: "check" },
     ],
   },
   {
     card: "feat",
     nameKey: "pr_pro",
     tagKey: "pr_pro_tag",
-    monthly: "4.99", yearly: "4.16", yearTotal: "49.90",
+    monthly: "7.99", yearly: "6.66", yearTotal: "79.90",
     badge: { key: "pr_badge_pop" },
     cta: "pri",
     feats: [
-      { key: "pr_pro_f1", kind: "check" },
-      { key: "pr_pro_f2", kind: "check" },
-      { key: "pr_pro_f3", kind: "ai" },
-      { key: "pr_pro_f4", kind: "ai" },
+      { key: "pr_unl", kind: "check" },
+      { key: "pr_p2", kind: "check" },
+      { key: "pr_p3", kind: "check" },
+      { key: "pr_p4", kind: "ai" },
+      { key: "pr_p5", kind: "ai" },
+      { key: "pr_odp", kind: "check" },
     ],
   },
   {
     card: "max",
     nameKey: "pr_max",
     tagKey: "pr_max_tag",
-    monthly: "9.99", yearly: "8.32", yearTotal: "99.90",
+    monthly: "12.99", yearly: "10.83", yearTotal: "129.90",
     badge: { key: "pr_badge_ai", ai: true },
     cta: "ghost",
     feats: [
-      { key: "pr_max_f1", kind: "check" },
-      { key: "pr_max_f2", kind: "ai" },
-      { key: "pr_max_f3", kind: "ai" },
+      { key: "pr_unl", kind: "check" },
+      { key: "pr_m2", kind: "check" },
+      { key: "pr_m3", kind: "ai" },
+      { key: "pr_m4", kind: "ai" },
+      { key: "pr_m5", kind: "ai" },
+      { key: "pr_m6", kind: "ai" },
     ],
   },
 ];
 ---
-<span id="download"></span>
 <section class="lp-section" id="pricing" style="border-top:1px solid var(--border)">
   <div class="lp-wrap">
     <div class="pr-head">
       <span class="lp-eyebrow">{t("pr_eye")}</span>
+      <h2 class="lp-h2" set:html={t("pr_h2")} />
+      <p class="lp-lead" style="text-align:center" set:html={t("pr_lead")} />
       <div class="pr-toggle">
         <button data-mode="m" class="on">{t("pr_tog_m")}</button>
         <button data-mode="y">{t("pr_tog_y")}</button>
@@ -82,8 +95,9 @@ const plans: Plan[] = [
               : <div class="pr-badge">{t(plan.badge.key)}</div>
           )}
           <div class="pr-name">{t(plan.nameKey)}</div>
+          <div class="pr-tagline" set:html={t(plan.tagKey)} />
           <div class="pr-price"><span class="cur">$</span><span class="amt" data-m={plan.monthly} data-y={plan.yearly}>{plan.monthly}</span><span class="per">{t("pr_per")}</span></div>
-          <div class="pr-bill" data-bill-m={t("pr_bill_m")} data-bill-y={t("pr_bill_y").replace("{total}", "$" + plan.yearTotal)}>{t("pr_bill_m")}</div>
+          <div class="pr-bill" data-bill-m={t("pr_bill_m")} data-bill-y={t("pr_bill_y")}>{t("pr_bill_m")}</div>
           <a class={`lp-btn ${plan.cta}`} href="#download">{t("pr_cta")}</a>
           <ul class="pr-feat">
             {plan.feats.map((f) => (

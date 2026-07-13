@@ -151,6 +151,7 @@ export default defineConfig({
     'lp-footer': 'border-t-1 border-t-solid border-t-lp-line py-[44px]',
     'ig-split': 'grid grid-cols-[1.05fr_.95fr] gap-[clamp(32px,5vw,72px)] items-center',
     'ig-copy': 'flex flex-col gap-[16px] max-w-[460px]',
+    'ig-head': 'text-center max-w-[640px] mx-auto flex flex-col gap-[16px] items-center',
     'ig-grid': 'grid grid-cols-4 gap-[10px]',
     'ig-tile': 'relative flex flex-col items-center gap-[9px] pt-[16px] px-[8px] pb-[13px] border border-solid border-border rounded-[13px] bg-bg-raised transition-all duration-[180ms] overflow-hidden',
     'ig-logo': 'w-[30px] h-[30px] flex items-center justify-center',

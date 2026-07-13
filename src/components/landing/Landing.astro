@@ -8,9 +8,11 @@ import Hero from "./Hero.astro";
 import Features from "./Features.astro";
 import AIBrief from "./AIBrief.astro";
 import AskPingr from "./AskPingr.astro";
+import Privacy from "./Privacy.astro";
 import Integrations from "./Integrations.astro";
 import ChannelRequest from "./ChannelRequest.astro";
 import Pricing from "./Pricing.astro";
+import FinalCTA from "./FinalCTA.astro";
 import Footer from "./Footer.astro";
 
 interface Props { lang: Lang; }
@@ -62,9 +64,11 @@ const meta = {
   <Features lang={lang} />
   <AIBrief lang={lang} />
   <AskPingr lang={lang} />
+  <Privacy lang={lang} />
   <Integrations lang={lang} />
-  <ChannelRequest lang={lang} />
   <Pricing lang={lang} />
+  <FinalCTA lang={lang} />
+  <ChannelRequest lang={lang} />
   <Footer lang={lang} />
 
   <script src="/landing.js" is:inline></script>
